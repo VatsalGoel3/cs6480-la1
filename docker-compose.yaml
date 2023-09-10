@@ -1,0 +1,76 @@
+version: "3"
+services:
+  hosta:
+    container_name: hosta
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.hosta
+    command: tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - subnet_ha
+  r1:
+    container_name: r1
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.r1
+    command: tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - subnet_ha
+      - subnet_r1r2
+  r2:
+    container_name: r2
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.r2
+    command: tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - subnet_r1r2
+      - subnet_r2r3
+  r3:
+    container_name: r3
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.r3
+    command: tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - subnet_r2r3
+      - subnet_hb
+  hostb:
+    container_name: hostb
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.hostb
+    command: tail -f /dev/null
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - subnet_hb
+networks:
+  subnet_ha:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.11.0/24
+  subnet_r1r2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.12.0/24
+  subnet_r2r3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.13.0/24
+  subnet_hb:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.16.0/24
